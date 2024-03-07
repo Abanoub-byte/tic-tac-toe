@@ -13,13 +13,8 @@ if (isset($_POST['cell'])) {
     }
 }
 
-if (playsCount() >= 25) { // 5x5 grid
+if (playsCount() >= 25) { // Update the limit to 25 for a 5x5 grid
     header("location: result.php");
-}
-
-if (getTurn() == 'o') {
-    // If it's the AI player's turn (o), make a random move
-    makeRandomMove();
 }
 ?>
 
@@ -32,8 +27,8 @@ if (getTurn() == 'o') {
 
         <?php
         $lastRow = 0;
-        for ($i = 1; $i <= 25; $i++) { // loop 5x5 grid
-            $row = ceil($i / 5); // calculation for rows
+        for ($i = 1; $i <= 25; $i++) { // Change the loop limit to 25 for a 5x5 grid
+            $row = ceil($i / 5); // Change the calculation for rows
 
             if ($row !== $lastRow) {
                 $lastRow = $row;
@@ -47,11 +42,11 @@ if (getTurn() == 'o') {
 
             $additionalClass = '';
 
-            if ($i % 5 == 2 || $i % 5 == 4) { // conditions for a 5x5 grid
+            if ($i % 5 == 2 || $i % 5 == 4) { // Adjust border
                 $additionalClass = 'vertical-border';
-            } elseif ($i % 5 == 1 || $i % 5 == 3) { // conditions for a 5x5 grid
+            } elseif ($i % 5 == 1 || $i % 5 == 3) { // Adjust border conditions for a 5x5 grid
                 $additionalClass = 'horizontal-border';
-            } elseif ($i % 5 == 0) { // conditions for a 5x5 grid
+            } elseif ($i % 5 == 0) { // Adjust border conditions for a 5x5 grid
                 $additionalClass = 'center-border';
             }
             ?>

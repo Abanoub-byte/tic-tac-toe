@@ -1,7 +1,4 @@
-
-
 <?php
-
 session_start();
 error_reporting(E_ERROR | E_PARSE);
 
@@ -88,6 +85,11 @@ function play($cell = '') {
 
     if (!$win) {
         switchTurn();
+
+        // Check if it's the AI's turn (Player O)
+        if (getTurn() === 'o') {
+            makeRandomMoveForAI();
+        }
     } else {
         markWin(getTurn());
         resetBoard();
@@ -96,16 +98,41 @@ function play($cell = '') {
     return $win;
 }
 
+// Function to make a random move for the AI (Player O)
+function makeRandomMoveForAI() {
+    // Generate a random cell number between 1 and 25 (for a 5x5 grid)
+    $randomCell = rand(1, 25);
+
+    // Check if the randomly selected cell is empty
+    while (getCell($randomCell)) {
+        $randomCell = rand(1, 25);
+    }
+
+    // Make the AI move in the randomly selected cell
+    $_SESSION['CELL_' . $randomCell] = getTurn();
+    addPlaysCount();
+
+    // Check if the AI wins
+    $win = playerPlayWin($randomCell);
+
+    if ($win) {
+        markWin(getTurn());
+        resetBoard();
+    } else {
+        switchTurn(); // Switch back to the player's turn (Player X)
+    }
+}
+
 function getCell($cell = '') {
     return $_SESSION['CELL_' . $cell];
 }
 
 function playerPlayWin($cell = 1) {
-    if (playsCount() < 5) { // Change the playsCount limit to 5 for a 5x5 grid
+    if (playsCount() < 4) { // Change the playsCount limit to 4 for a 5x5 grid
         return false;
     }
 
-    $column = ($cell - 1) % 5; // Change the column calculation for a 5x5 grid
+    $column = ($cell - 1) % 5; // Change the clumn calculation for a 5x5 grid
     $row = ceil($cell / 5); // Change the row calculation for a 5x5 grid
 
     $player = getTurn();
@@ -114,7 +141,7 @@ function playerPlayWin($cell = 1) {
 }
 
 function isVerticalWin($column = 1, $turn = 'x') {
-    for ($i = 0; $i < 5; $i++) { // Change the loop limit to 5 for a 5x5 grid
+    for ($i = 0; $i < 4; $i++) { // Change the loop limit to 4 for a 5x5 grid
         if (getCell($column + $i * 5) != $turn) { // Adjust cell index for a 5x5 grid
             return false;
         }
@@ -123,7 +150,7 @@ function isVerticalWin($column = 1, $turn = 'x') {
 }
 
 function isHorizontalWin($row = 1, $turn = 'x') {
-    for ($i = 0; $i < 5; $i++) { // Change the loop limit to 5 for a 5x5 grid
+    for ($i = 0; $i < 4; $i++) { // Change the loop limit to 4 for a 5x5 grid
         if (getCell($row * 5 + $i) != $turn) { // Adjust cell index for a 5x5 grid
             return false;
         }
@@ -134,7 +161,7 @@ function isHorizontalWin($row = 1, $turn = 'x') {
 function isDiagonalWin($turn = 'x') {
     $win = true;
 
-    for ($i = 0; $i < 5; $i++) { // Change the loop limit to 5 for a 5x5 grid
+    for ($i = 0; $i < 4; $i++) { // Change the loop limit to 4 for a 5x5 grid
         if (getCell($i * 6 + 1) != $turn) { // Adjust cell index for a 5x5 grid
             $win = false;
             break;
@@ -143,7 +170,7 @@ function isDiagonalWin($turn = 'x') {
 
     if (!$win) {
         $win = true;
-        for ($i = 0; $i < 5; $i++) { // Change the loop limit to 5 for a 5x5 grid
+        for ($i = 0; $i < 4; $i++) { // Change the loop limit to 4 for a 5x5 grid
             if (getCell($i * 4 + 5) != $turn) { // Adjust cell index for a 5x5 grid
                 $win = false;
                 break;
@@ -158,32 +185,4 @@ function score($player = 'x') {
     $score = $_SESSION['PLAYER_' . strtoupper($player) . '_WINS'];
     return $score ? $score : 0;
 }
-
-// Function to make a random move for the AI player
-function makeRandomMove() {
-    $availableCells = [];
-
-    // Find all available empty cells
-    for ($i = 1; $i <= 25; $i++) { // Change the loop limit to 25 for a 5x5 grid
-        if (!getCell($i)) {
-            $availableCells[] = $i;
-        }
-    }
-
-    // Choose a random available cell and play it
-    if (!empty($availableCells)) {
-        $randomIndex = array_rand($availableCells);
-        play($availableCells[$randomIndex]);
-    }
-}
-
-// Example usage of the AI player
-if (getTurn() == 'o') {
-    makeRandomMove();
-}
-
-// You can continue using the play() function as before to handle player moves.
-
 ?>
-
-

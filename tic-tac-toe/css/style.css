@@ -93,3 +93,6 @@ button[disabled] {
     color: red;
     margin-top: 30px;
 }
+.winning-cell {
+    background-color: green;
+}
